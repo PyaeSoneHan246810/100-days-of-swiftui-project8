@@ -4,41 +4,39 @@ struct MissionView: View {
     let mission: Mission
     let crewMembers: [CrewMember]
     var body: some View {
-        NavigationStack {
-            ScrollView(showsIndicators: false) {
-                MissionImage(
-                    image: mission.imageName
-                ).padding([.horizontal, .vertical], 16)
-                CustomDivider()
-                Details(
-                    title: "Mission Highlights",
-                    description: mission.description
-                ).padding([.horizontal, .vertical], 16)
-                CustomDivider()
-                Text("Crew")
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding([.horizontal, .vertical], 16)
-                    .font(.title.bold())
-                    .foregroundStyle(.white)
-                ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHStack(spacing: 12) {
-                        ForEach(crewMembers, id: \.self.astronaut.id) { crewMember in
-                            NavigationLink {
-                                AstronautView(astronaut: crewMember.astronaut)
-                            } label: {
-                                CrewMemberItem(crewMember: crewMember)
-                            }
-                        }
-                    }.padding(.horizontal, 16)
-                }.padding(.bottom, 16)
-                CustomDivider()
-                Details(
-                    title: "Launch Date",
-                    description: mission.formattedLaunchDate
-                ).padding([.horizontal, .vertical], 16)
-            }.background(.darkBackground)
-                .navigationTitle(mission.displayName)
-        }
+        ScrollView(showsIndicators: false) {
+            MissionImage(
+                image: mission.imageName
+            ).padding([.horizontal, .vertical], 16)
+            CustomDivider()
+            Details(
+                title: "Mission Highlights",
+                description: mission.description
+            ).padding([.horizontal, .vertical], 16)
+            CustomDivider()
+            Text("Crew")
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding([.horizontal, .vertical], 16)
+                .font(.title.bold())
+                .foregroundStyle(.white)
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 12) {
+                    ForEach(crewMembers, id: \.self.astronaut.id) { crewMember in
+                        NavigationLink(value: crewMember) {
+                            CrewMemberItem(crewMember: crewMember)
+                        }                    }
+                }.padding(.horizontal, 16)
+            }.padding(.bottom, 16)
+            CustomDivider()
+            Details(
+                title: "Launch Date",
+                description: mission.formattedLaunchDate
+            ).padding([.horizontal, .vertical], 16)
+        }.background(.darkBackground)
+            .navigationTitle(mission.displayName)
+            .navigationDestination(for: CrewMember.self) { crewMember in
+                AstronautView(astronaut: crewMember.astronaut)
+            }
     }
     init(mission: Mission, astronauts: [String: Astronaut]) {
         self.mission = mission
@@ -90,7 +88,7 @@ struct Details: View {
     }
 }
 
-struct CrewMember {
+struct CrewMember: Hashable {
     let role: String
     let astronaut: Astronaut
 }

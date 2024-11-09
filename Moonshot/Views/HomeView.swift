@@ -14,12 +14,7 @@ struct HomeView: View {
                         spacing: 16
                     ) {
                         ForEach(missions) { mission in
-                            NavigationLink {
-                                MissionView(
-                                    mission: mission,
-                                    astronauts: astronauts
-                                )
-                            } label: {
+                            NavigationLink(value: mission) {
                                 MissionItem(mission: mission)
                             }
                         }
@@ -28,12 +23,7 @@ struct HomeView: View {
                 } else {
                     LazyVStack(spacing: 16) {
                         ForEach(missions) { mission in
-                            NavigationLink {
-                                MissionView(
-                                    mission: mission,
-                                    astronauts: astronauts
-                                )
-                            } label: {
+                            NavigationLink(value: mission) {
                                 MissionItem(mission: mission)
                             }
                         }
@@ -48,6 +38,12 @@ struct HomeView: View {
                             Image(systemName: layoutOption)
                         }
                     }.pickerStyle(.segmented)
+                }
+                .navigationDestination(for: Mission.self) { mission in
+                    MissionView(
+                        mission: mission,
+                        astronauts: astronauts
+                    )
                 }
                 .preferredColorScheme(.dark)
         }
